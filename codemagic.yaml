@@ -9,12 +9,12 @@ workflows:
         script: |
           mkdir -p raylib/build-ios
           cd raylib/build-ios
-          cmake .. \
-            -G "Unix Makefiles" \
+          cmake ../src \
             -DCMAKE_TOOLCHAIN_FILE=$HOME/.cmake/ios.toolchain.cmake \
-            -DPLATFORM=OS \
-            -DCMAKE_BUILD_TYPE=Release
-          make raylib
+            -DCMAKE_BUILD_TYPE=Release \
+            -DPLATFORM=OS
+          make
+
 
       - name: Clone Raylib
         script: |
