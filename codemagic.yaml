@@ -19,24 +19,14 @@ workflows:
           mkdir -p $HOME/.cmake
           curl -L https://raw.githubusercontent.com/leetal/ios-cmake/master/ios.toolchain.cmake -o $HOME/.cmake/ios.toolchain.cmake
 
-      - name: Build Raylib static lib
-        script: |
-          mkdir -p raylib/build-ios
-          cd raylib/build-ios
-          cmake .. \
-            -DCMAKE_TOOLCHAIN_FILE=$HOME/.cmake/ios.toolchain.cmake \
-            -DPLATFORM=OS64 \
-            -DCMAKE_BUILD_TYPE=Release
-          cmake --build . --config Release
-
       - name: Build App
         script: |
           mkdir -p build
           cd build
           cmake .. \
             -DCMAKE_TOOLCHAIN_FILE=$HOME/.cmake/ios.toolchain.cmake \
-            -DPLATFORM=OS64 \
-            -DCMAKE_BUILD_TYPE=Release
+            -DCMAKE_BUILD_TYPE=Release \
+            -DPLATFORM=OS64
           cmake --build . --config Release
 
       - name: Package .ipa
