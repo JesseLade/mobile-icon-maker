@@ -4,21 +4,11 @@ workflows:
     environment:
       xcode: latest
       cocoapods: default
+
     scripts:
-      - name: Build Raylib static lib
-        script: |
-          mkdir -p raylib/build-ios
-          cd raylib/build-ios
-          cmake ../src \
-            -DCMAKE_TOOLCHAIN_FILE=$HOME/.cmake/ios.toolchain.cmake \
-            -DCMAKE_BUILD_TYPE=Release \
-            -DPLATFORM=OS
-          make
-
-
       - name: Clone Raylib
         script: |
-          git submodule update --init --recursive
+          git clone --recursive https://github.com/raysan5/raylib.git raylib
 
       - name: Install Tools
         script: |
@@ -29,30 +19,26 @@ workflows:
           mkdir -p $HOME/.cmake
           curl -L https://raw.githubusercontent.com/leetal/ios-cmake/master/ios.toolchain.cmake -o $HOME/.cmake/ios.toolchain.cmake
 
+      - name: Build Raylib static lib
+        script: |
+          mkdir -p raylib/build-ios
+          cd raylib/build-ios
+          cmake ../src \
+            -DCMAKE_TOOLCHAIN_FILE=$HOME/.cmake/ios.toolchain.cmake \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DPLATFORM=OS
+          make
+
       - name: Build App 
         script: |
-          # Clone raylib if missing or incomplete
-          if [ ! -d "raylib/src" ]; then
-            echo "Raylib sources not found, cloning raylib repo with submodules..."
-            git clone --recursive https://github.com/raysan5/raylib.git raylib
-          else
-            echo "Raylib directory found, updating submodules..."
-            cd raylib
-            git submodule update --init --recursive
-            cd ..
-          fi
-
           mkdir -p build
           cd build
-
           cmake .. \
             -G "Unix Makefiles" \
             -DCMAKE_TOOLCHAIN_FILE=$HOME/.cmake/ios.toolchain.cmake \
             -DPLATFORM=OS \
             -DCMAKE_BUILD_TYPE=Release
-
           make
-
 
       - name: Package .ipa
         script: |
