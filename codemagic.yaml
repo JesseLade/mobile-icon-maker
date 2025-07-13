@@ -25,9 +25,9 @@ workflows:
           cd raylib/build-ios
           cmake .. \
             -DCMAKE_TOOLCHAIN_FILE=$HOME/.cmake/ios.toolchain.cmake \
-            -DCMAKE_BUILD_TYPE=Release \
-            -DIOS_PLATFORM=OS64
-          make
+            -DPLATFORM=OS64 \
+            -DCMAKE_BUILD_TYPE=Release
+          cmake --build . --config Release
 
       - name: Build App
         script: |
@@ -35,9 +35,9 @@ workflows:
           cd build
           cmake .. \
             -DCMAKE_TOOLCHAIN_FILE=$HOME/.cmake/ios.toolchain.cmake \
-            -DCMAKE_BUILD_TYPE=Release \
-            -DIOS_PLATFORM=OS64
-          make
+            -DPLATFORM=OS64 \
+            -DCMAKE_BUILD_TYPE=Release
+          cmake --build . --config Release
 
       - name: Package .ipa
         script: |
