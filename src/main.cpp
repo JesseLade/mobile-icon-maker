@@ -162,7 +162,7 @@ void DrawKeyboard() {
         int x = startX + (i % 10) * (keyWidth + 5);
         int y = startY + (i / 10) * (keyHeight + 5);
         DrawRectangle(x, y, keyWidth, keyHeight, GRAY);
-        DrawTextCodepoint(GetFontDefault(), keyLayout[i], x + 12, y + 8, 20, BLACK);
+        DrawTextCodepoint(GetFontDefault(), keyLayout[i], (Vector2){ (float)(x + 12), (float)(y + 8) }, 20, BLACK);
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
             Vector2 mp = GetMousePosition();
             if (CheckCollisionPointRec(mp, (Rectangle){ (float)x, (float)y, (float)keyWidth, (float)keyHeight })) {
