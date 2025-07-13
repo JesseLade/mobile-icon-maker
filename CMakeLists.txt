@@ -20,3 +20,8 @@ file(GLOB SOURCES "src/*.cpp")
 
 add_executable(icon_maker ${SOURCES})
 target_link_libraries(icon_maker raylib)
+cmake_minimum_required(VERSION 3.14...3.27) # or whatever CMake version you have
+project(icon_maker)
+
+add_executable(icon_maker src/main.cpp)
+
