@@ -5,6 +5,17 @@ workflows:
       xcode: latest
       cocoapods: default
     scripts:
+      - name: Build Raylib static lib
+        script: |
+          mkdir -p raylib/build-ios
+          cd raylib/build-ios
+          cmake .. \
+            -G "Unix Makefiles" \
+            -DCMAKE_TOOLCHAIN_FILE=$HOME/.cmake/ios.toolchain.cmake \
+            -DPLATFORM=OS \
+            -DCMAKE_BUILD_TYPE=Release
+          make raylib
+
       - name: Clone Raylib
         script: |
           git submodule update --init --recursive
