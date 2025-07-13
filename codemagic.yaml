@@ -1,0 +1,26 @@
+workflows:
+  raylib_ios_build:
+    name: Raylib iOS Build Demi 💖
+    environment:
+      xcode: latest
+      cocoapods: default
+    scripts:
+      - name: Install CMake
+        script: |
+          brew install cmake
+      - name: Clone Raylib
+        script: |
+          git submodule update --init --recursive
+      - name: Build App
+        script: |
+          mkdir build
+          cd build
+          cmake .. -DCMAKE_TOOLCHAIN_FILE=$HOME/.cmake/ios.toolchain.cmake -DIOS_PLATFORM=OS
+          cmake --build . --config Release
+      - name: Package .ipa
+        script: |
+          mkdir Payload
+          cp build/icon_maker Payload/icon_maker.app
+          zip -r raylib_icon_maker.ipa Payload
+    artifacts:
+      - raylib_icon_maker.ipa
