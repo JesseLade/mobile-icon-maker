@@ -4,22 +4,25 @@ workflows:
     environment:
       xcode: latest
       cocoapods: default
-      # Add environment vars ONLY if you have values
-      # vars:
-      #   CODE_SIGN_IDENTITY: "iPhone Developer: Your Name (TEAMID)"
-      #   PROVISIONING_PROFILE_SPECIFIER: "your_profile"
     scripts:
-      - name: Install CMake
+      - name: Install CMake and Ninja
         script: |
-          brew install cmake
-      - name: Clone Raylib (if using submodules)
+          brew install cmake ninja
+      - name: Get iOS CMake Toolchain
+        script: |
+          git clone https://github.com/leetal/ios-cmake.git ~/ios-cmake
+      - name: Clone Raylib (if needed)
         script: |
           git submodule update --init --recursive
-      - name: Build App
+      - name: Build Raylib iOS App
         script: |
           mkdir -p build
           cd build
-          cmake .. -DCMAKE_TOOLCHAIN_FILE=$HOME/.cmake/ios.toolchain.cmake -DIOS_PLATFORM=OS -DCMAKE_BUILD_TYPE=Release
+          cmake .. \
+            -G Ninja \
+            -DCMAKE_TOOLCHAIN_FILE=$HOME/ios-cmake/ios.toolchain.cmake \
+            -DIOS_PLATFORM=OS \
+            -DCMAKE_BUILD_TYPE=Release
           cmake --build . --config Release
       - name: Package .ipa
         script: |
