@@ -26,17 +26,17 @@ int inputLength = 0;
 bool inputActive = false;
 bool rubberActive = false;
 
-// Mobile on-screen keyboard input
 char keyLayout[] = "1234567890QWERTYUIOPASDFGHJKLZXCVBNM#";
 int selectedKey = -1;
 
 Color HSVtoRGB(float h, float s, float v) {
     float r, g, b;
-    int i = int(h * 6);
-    float f = h * 6 - i;
-    float p = v * (1 - s);
-    float q = v * (1 - f * s);
-    float t = v * (1 - (1 - f) * s);
+    int i = (int)(h * 6.0f);
+    float f = h * 6.0f - i;
+    float p = v * (1.0f - s);
+    float q = v * (1.0f - f * s);
+    float t = v * (1.0f - (1.0f - f) * s);
+
     switch (i % 6) {
         case 0: r = v; g = t; b = p; break;
         case 1: r = q; g = v; b = p; break;
@@ -45,13 +45,14 @@ Color HSVtoRGB(float h, float s, float v) {
         case 4: r = t; g = p; b = v; break;
         case 5: r = v; g = p; b = q; break;
     }
-    return { (unsigned char)(r * 255), (unsigned char)(g * 255), (unsigned char)(b * 255), 255 };
+
+    return (Color){ (unsigned char)(r * 255), (unsigned char)(g * 255), (unsigned char)(b * 255), 255 };
 }
 
 void RGBtoHSV(Color c, float &h, float &s, float &v) {
     float r = c.r / 255.0f, g = c.g / 255.0f, b = c.b / 255.0f;
-    float max = std::max(r, std::max(g, b));
-    float min = std::min(r, std::min(g, b));
+    float max = fmaxf(fmaxf(r, g), b);
+    float min = fminf(fminf(r, g), b);
     v = max;
     float d = max - min;
     s = max == 0 ? 0 : d / max;
@@ -59,7 +60,7 @@ void RGBtoHSV(Color c, float &h, float &s, float &v) {
     else if (max == r) h = (g - b) / d + (g < b ? 6 : 0);
     else if (max == g) h = (b - r) / d + 2;
     else h = (r - g) / d + 4;
-    h /= 6;
+    h /= 6.0f;
 }
 
 void AddColor(Color c) {
@@ -94,7 +95,7 @@ void ProcessInput(Image frames[]) {
     if (inputMode == RGB_MODE) {
         int r, g, b;
         if (iss >> r >> g >> b) {
-            drawColor = { (unsigned char)r, (unsigned char)g, (unsigned char)b, 255 };
+            drawColor = (Color){ (unsigned char)r, (unsigned char)g, (unsigned char)b, 255 };
             AddColor(drawColor);
         }
     } else if (inputMode == HSV_MODE) {
@@ -117,7 +118,7 @@ void ProcessInput(Image frames[]) {
                 unsigned char r = std::stoi(hex.substr(0, 2), nullptr, 16);
                 unsigned char g = std::stoi(hex.substr(2, 2), nullptr, 16);
                 unsigned char b = std::stoi(hex.substr(4, 2), nullptr, 16);
-                drawColor = { r, g, b, 255 };
+                drawColor = (Color){ r, g, b, 255 };
                 AddColor(drawColor);
             } catch (...) {}
         }
@@ -157,14 +158,14 @@ void DrawColorWheel(int cx, int cy, int radius) {
 void DrawKeyboard() {
     int keyWidth = 40, keyHeight = 40;
     int startX = 10, startY = HEIGHT - 200;
-    for (int i = 0; i < sizeof(keyLayout) - 1; i++) {
+    for (int i = 0; i < (int)strlen(keyLayout); i++) {
         int x = startX + (i % 10) * (keyWidth + 5);
         int y = startY + (i / 10) * (keyHeight + 5);
         DrawRectangle(x, y, keyWidth, keyHeight, GRAY);
         DrawTextCodepoint(GetFontDefault(), keyLayout[i], x + 12, y + 8, 20, BLACK);
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
             Vector2 mp = GetMousePosition();
-            if (CheckCollisionPointRec(mp, { (float)x, (float)y, (float)keyWidth, (float)keyHeight })) {
+            if (CheckCollisionPointRec(mp, (Rectangle){ (float)x, (float)y, (float)keyWidth, (float)keyHeight })) {
                 if (inputLength < 63) {
                     inputBuffer[inputLength++] = keyLayout[i];
                     inputBuffer[inputLength] = '\0';
@@ -172,26 +173,25 @@ void DrawKeyboard() {
             }
         }
     }
-    // Backspace
+
     int bx = startX, by = startY + 4 * (keyHeight + 5);
     DrawRectangle(bx, by, 80, keyHeight, DARKGRAY);
     DrawText("BKSP", bx + 10, by + 10, 20, WHITE);
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
         Vector2 mp = GetMousePosition();
-        if (CheckCollisionPointRec(mp, { (float)bx, (float)by, 80, (float)keyHeight }) && inputLength > 0) {
+        if (CheckCollisionPointRec(mp, (Rectangle){ (float)bx, (float)by, 80, (float)keyHeight }) && inputLength > 0) {
             inputLength--;
             inputBuffer[inputLength] = '\0';
         }
     }
 
-    // Enter
     int ex = bx + 100;
     DrawRectangle(ex, by, 80, keyHeight, DARKGREEN);
     DrawText("ENTER", ex + 10, by + 10, 20, WHITE);
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
         Vector2 mp = GetMousePosition();
-        if (CheckCollisionPointRec(mp, { (float)ex, (float)by, 80, (float)keyHeight })) {
-            ProcessInput(nullptr); // nullptr used because frames is global in actual use
+        if (CheckCollisionPointRec(mp, (Rectangle){ (float)ex, (float)by, 80, (float)keyHeight })) {
+            ProcessInput(nullptr); // Placeholder, would be passed properly
         }
     }
 }
@@ -232,7 +232,7 @@ int main() {
         ClearBackground(RAYWHITE);
         DrawTexture(canvas, 0, 0, WHITE);
 
-        for (int i = 0; i < colorHistory.size(); i++) {
+        for (int i = 0; i < (int)colorHistory.size(); i++) {
             DrawRectangle(10 + i * 30, HEIGHT - 40, 28, 28, colorHistory[i]);
         }
 
@@ -249,7 +249,7 @@ int main() {
         }
 
         std::vector<Color> palette = GeneratePalette(drawColor);
-        for (int i = 0; i < palette.size(); i++) {
+        for (int i = 0; i < (int)palette.size(); i++) {
             int x = WIDTH - 160 + i * 30, y = HEIGHT - 60;
             DrawRectangle(x, y, 28, 28, palette[i]);
             if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) &&
