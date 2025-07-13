@@ -32,4 +32,4 @@ workflows:
           zip -r raylib_icon_maker.ipa Payload
     artifacts:
       - raylib_icon_maker.ipa
-    project_type: none
+   
