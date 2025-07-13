@@ -11,9 +11,15 @@ set(CMAKE_OSX_ARCHITECTURES "arm64")
 # Raylib iOS path
 set(RAYLIB_SRC raylib/src)
 set(RAYLIB_PLATFORM src/platform/ios) # if you have platform-specific code
+# Remove add_subdirectory(raylib/src)
 
-# Add raylib subdirectory (make sure it exists!)
-add_subdirectory(${RAYLIB_SRC} raylib_build)
+include_directories(raylib/src)
+
+file(GLOB SOURCES "src/*.cpp")
+
+add_executable(icon_maker ${SOURCES})
+target_link_libraries(icon_maker ${CMAKE_SOURCE_DIR}/raylib/build-ios/libraylib.a)
+
 
 include_directories(${RAYLIB_SRC} ${RAYLIB_SRC}/extras)
 
