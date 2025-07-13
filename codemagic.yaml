@@ -5,25 +5,26 @@ workflows:
       xcode: latest
       cocoapods: default
     scripts:
-      - name: Install CMake and Ninja
+      - name: Install Tools
         script: |
           brew install cmake ninja
-      - name: Get iOS CMake Toolchain
+      - name: Download iOS CMake Toolchain
         script: |
-          git clone https://github.com/leetal/ios-cmake.git ~/ios-cmake
-      - name: Clone Raylib (if needed)
+          mkdir -p $HOME/.cmake
+          curl -L https://raw.githubusercontent.com/leetal/ios-cmake/master/ios.toolchain.cmake -o $HOME/.cmake/ios.toolchain.cmake
+      - name: Clone Raylib
         script: |
           git submodule update --init --recursive
-      - name: Build Raylib iOS App
+      - name: Build App
         script: |
           mkdir -p build
           cd build
           cmake .. \
-            -G Ninja \
-            -DCMAKE_TOOLCHAIN_FILE=$HOME/ios-cmake/ios.toolchain.cmake \
-            -DIOS_PLATFORM=OS \
+            -G "Unix Makefiles" \
+            -DCMAKE_TOOLCHAIN_FILE=$HOME/.cmake/ios.toolchain.cmake \
+            -DPLATFORM=OS \
             -DCMAKE_BUILD_TYPE=Release
-          cmake --build . --config Release
+          make
       - name: Package .ipa
         script: |
           mkdir -p Payload/icon_maker.app
@@ -31,3 +32,4 @@ workflows:
           zip -r raylib_icon_maker.ipa Payload
     artifacts:
       - raylib_icon_maker.ipa
+    project_type: none
