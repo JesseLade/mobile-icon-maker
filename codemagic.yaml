@@ -23,7 +23,7 @@ workflows:
         script: |
           mkdir -p raylib/build-ios
           cd raylib/build-ios
-          cmake ../src \
+          cmake .. \
             -DCMAKE_TOOLCHAIN_FILE=$HOME/.cmake/ios.toolchain.cmake \
             -DCMAKE_BUILD_TYPE=Release \
             -DPLATFORM=OS
