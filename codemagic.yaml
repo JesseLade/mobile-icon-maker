@@ -26,7 +26,6 @@ workflows:
           cmake .. \
             -DCMAKE_TOOLCHAIN_FILE=$HOME/.cmake/ios.toolchain.cmake \
             -DCMAKE_BUILD_TYPE=Release \
-            -DPLATFORM=OS
           make
 
       - name: Build App 
