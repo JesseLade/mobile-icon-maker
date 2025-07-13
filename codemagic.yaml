@@ -5,6 +5,10 @@ workflows:
       xcode: latest
       cocoapods: default
     scripts:
+      - name: Clone Raylib
+        script: |
+          git submodule update --init --recursive
+
       - name: Install Tools
         script: |
           brew install cmake ninja
@@ -32,6 +36,3 @@ workflows:
           zip -r raylib_icon_maker.ipa Payload
     artifacts:
       - raylib_icon_maker.ipa
-
-
-
