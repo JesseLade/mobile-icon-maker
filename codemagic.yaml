@@ -18,9 +18,9 @@ workflows:
           mkdir -p $HOME/.cmake
           curl -L https://raw.githubusercontent.com/leetal/ios-cmake/master/ios.toolchain.cmake -o $HOME/.cmake/ios.toolchain.cmake
 
-      - name: Build App
+      - name: Build App 
         script: |
-    # Clone raylib if missing or incomplete
+          # Clone raylib if missing or incomplete
           if [ ! -d "raylib/src" ]; then
             echo "Raylib sources not found, cloning raylib repo with submodules..."
             git clone --recursive https://github.com/raysan5/raylib.git raylib
