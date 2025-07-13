@@ -2,25 +2,35 @@ workflows:
   raylib_ios_build:
     name: Raylib iOS Build Demi 💖
     environment:
-      xcode: latest
+      xcode: latest  # for signing tools, even if not building with Xcode
       cocoapods: default
+      # Optionally specify macos, ios versions if needed
     scripts:
       - name: Install CMake
         script: |
-          brew install cmake 
-      - name: Clone Raylib
+          brew install cmake
+      - name: Clone Raylib (if using submodules)
         script: |
           git submodule update --init --recursive
       - name: Build App
         script: |
-          mkdir build
+          mkdir -p build
           cd build
-          cmake .. -DCMAKE_TOOLCHAIN_FILE=$HOME/.cmake/ios.toolchain.cmake -DIOS_PLATFORM=OS
+          # Use your iOS toolchain file path or install it in scripts if needed
+          cmake .. -DCMAKE_TOOLCHAIN_FILE=$HOME/.cmake/ios.toolchain.cmake -DIOS_PLATFORM=OS -DCMAKE_BUILD_TYPE=Release
           cmake --build . --config Release
       - name: Package .ipa
         script: |
-          mkdir Payload
-          cp build/icon_maker Payload/icon_maker.app
+          mkdir -p Payload/icon_maker.app
+          cp -R build/icon_maker.app/* Payload/icon_maker.app/
           zip -r raylib_icon_maker.ipa Payload
     artifacts:
       - raylib_icon_maker.ipa
+    publishing:
+      # add your publishing configs here if needed
+    triggering:
+      # optional triggers config
+    environment:
+      vars:
+        # add env variables like CODE_SIGN_IDENTITY, PROVISIONING_PROFILE_SPECIFIER, etc.
+    project_type: none   # THIS IS THE KEY — tells CodeMagic NOT to expect an Xcode project
