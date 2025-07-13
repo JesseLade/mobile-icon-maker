@@ -12,16 +12,15 @@ workflows:
       - name: Install Tools
         script: |
           brew install cmake ninja
+
       - name: Download iOS CMake Toolchain
         script: |
           mkdir -p $HOME/.cmake
           curl -L https://raw.githubusercontent.com/leetal/ios-cmake/master/ios.toolchain.cmake -o $HOME/.cmake/ios.toolchain.cmake
-      - name: Clone Raylib
-        script: |
-          git submodule update --init --recursive
+
       - name: Build App
         script: |
-        # Clone raylib if missing in root (not inside build)
+          # Clone raylib if missing in root (not inside build)
           if [ ! -d "raylib/src" ]; then
             echo "Raylib sources not found, cloning raylib repo in root folder..."
             git clone https://github.com/raysan5/raylib.git raylib
@@ -38,11 +37,11 @@ workflows:
 
           make
 
-
       - name: Package .ipa
         script: |
           mkdir -p Payload/icon_maker.app
           cp -R build/icon_maker.app/* Payload/icon_maker.app/
           zip -r raylib_icon_maker.ipa Payload
+
     artifacts:
       - raylib_icon_maker.ipa
