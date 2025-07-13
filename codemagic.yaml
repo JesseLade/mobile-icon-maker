@@ -20,10 +20,15 @@ workflows:
 
       - name: Build App
         script: |
-          # Clone raylib if missing in root (not inside build)
+    # Clone raylib if missing or incomplete
           if [ ! -d "raylib/src" ]; then
-            echo "Raylib sources not found, cloning raylib repo in root folder..."
-            git clone https://github.com/raysan5/raylib.git raylib
+            echo "Raylib sources not found, cloning raylib repo with submodules..."
+            git clone --recursive https://github.com/raysan5/raylib.git raylib
+          else
+            echo "Raylib directory found, updating submodules..."
+            cd raylib
+            git submodule update --init --recursive
+            cd ..
           fi
 
           mkdir -p build
@@ -36,6 +41,7 @@ workflows:
             -DCMAKE_BUILD_TYPE=Release
 
           make
+
 
       - name: Package .ipa
         script: |
