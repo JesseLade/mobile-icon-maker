@@ -21,20 +21,24 @@ workflows:
           git submodule update --init --recursive
       - name: Build App
         script: |
+        # Clone raylib if missing in root (not inside build)
+          if [ ! -d "raylib/src" ]; then
+            echo "Raylib sources not found, cloning raylib repo in root folder..."
+            git clone https://github.com/raysan5/raylib.git raylib
+          fi
 
           mkdir -p build
           cd build
-          if [ ! -d "raylib/src" ]; then
-          echo "Raylib sources not found, cloning raylib repo..."
-          git clone https://github.com/raysan5/raylib.git raylib
-          fi
 
           cmake .. \
             -G "Unix Makefiles" \
             -DCMAKE_TOOLCHAIN_FILE=$HOME/.cmake/ios.toolchain.cmake \
             -DPLATFORM=OS \
             -DCMAKE_BUILD_TYPE=Release
+
           make
+
+
       - name: Package .ipa
         script: |
           mkdir -p Payload/icon_maker.app
