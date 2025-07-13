@@ -33,13 +33,5 @@ workflows:
     artifacts:
       - raylib_icon_maker.ipa
     publishing:
-      app_store_connect:
-        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
-        key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
-        private_key: $APP_STORE_CONNECT_PRIVATE_KEY
-        bundle_id: $BUNDLE_ID
-        app_id: $APP_STORE_APP_ID
-        submit_to_testflight: true
-        submit_to_app_store: true  # or false if you only want TestFlight
 
 
