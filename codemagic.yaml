@@ -1,42 +1,7 @@
-
 workflows:
   raylib-desktop:
     name: Raylib Icon Maker Desktop Build
     environment:
-
-      xcode: latest
-      cocoapods: default
-
-    scripts:
-      - name: Clone Raylib
-        script: |
-          git clone --recursive https://github.com/raysan5/raylib.git raylib
-
-      - name: Install Tools
-        script: |
-          brew install cmake ninja
-
-      - name: Download iOS CMake Toolchain
-        script: |
-          mkdir -p $HOME/.cmake
-          curl -L https://raw.githubusercontent.com/leetal/ios-cmake/master/ios.toolchain.cmake -o $HOME/.cmake/ios.toolchain.cmake
-
-      - name: Build App
-        script: |
-          mkdir -p build
-          cd build
-          cmake .. \
-            -DCMAKE_TOOLCHAIN_FILE=$HOME/.cmake/ios.toolchain.cmake \
-            -DCMAKE_BUILD_TYPE=Release \
-            -DPLATFORM=OS64
-          cmake --build . --config Release
-
-      - name: Package .ipa
-        script: |
-          mkdir -p Payload/icon_maker.app
-          cp -R build/icon_maker.app/* Payload/icon_maker.app/
-          zip -r raylib_icon_maker.ipa Payload
-
       # Mac: use "mac_mini" or "mac_pro" as available; for Linux, use "ubuntu-latest"
       # For Linux, install raylib with apt-get; for mac, use Homebrew.
       groups:
@@ -49,7 +14,7 @@ workflows:
       - name: Install raylib and build tools
         script: |
           brew update
-          brew install raylib
+          brew install cmake raylib
 
       - name: Configure (CMake)
         script: |
@@ -62,7 +27,6 @@ workflows:
       # Optionally, for Linux:
       # - sudo apt-get install build-essential cmake libraylib-dev
 
-
     artifacts:
       - build/raylib_icon_maker
 
@@ -70,5 +34,8 @@ workflows:
     publishing:
       email:
         recipients:
-          - "demiomolola1@gmail.com"
+          - "your-email@example.com"
         notify_on_build_success: true
+
+    # Time quota, resources, etc.
+    max_build_duration: 20m
