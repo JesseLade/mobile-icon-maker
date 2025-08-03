@@ -1,7 +1,8 @@
 workflows:
-  raylib_ios_build:
-    name: Raylib iOS Build Demi 💖
+  raylib-desktop:
+    name: Raylib Icon Maker Desktop Build
     environment:
+
       xcode: latest
       cocoapods: default
 
@@ -35,5 +36,38 @@ workflows:
           cp -R build/icon_maker.app/* Payload/icon_maker.app/
           zip -r raylib_icon_maker.ipa Payload
 
+      # Mac: use "mac_mini" or "mac_pro" as available; for Linux, use "ubuntu-latest"
+      # For Linux, install raylib with apt-get; for mac, use Homebrew.
+      groups:
+        - key: COMMON_TOOLS
+          scripts:
+            - package-manager: brew  # or apt-get if on Linux
+
+    scripts:
+      # Setup (for macOS; change 'brew' to 'apt-get' for Linux)
+      - name: Install raylib and build tools
+        script: |
+          brew update
+          brew install raylib
+
+      - name: Configure (CMake)
+        script: |
+          cmake -S . -B build
+
+      - name: Build
+        script: |
+          cmake --build build --config Release
+
+      # Optionally, for Linux:
+      # - sudo apt-get install build-essential cmake libraylib-dev
+
+
     artifacts:
-      - raylib_icon_maker.ipa
+      - build/raylib_icon_maker
+
+    # Exports
+    publishing:
+      email:
+        recipients:
+          - "demiomolola1@gmail.com"
+        notify_on_build_success: true
