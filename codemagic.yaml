@@ -37,5 +37,4 @@ workflows:
           - "demiomolola1@gmail.com"
         notify_on_build_success: true
 
-    # Time quota, resources, etc.
-    max_build_duration: 20m
+
