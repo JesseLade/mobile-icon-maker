@@ -34,7 +34,7 @@ workflows:
     publishing:
       email:
         recipients:
-          - "your-email@example.com"
+          - "demiomolola1@gmail.com"
         notify_on_build_success: true
 
     # Time quota, resources, etc.
