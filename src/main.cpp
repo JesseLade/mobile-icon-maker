@@ -1,6 +1,6 @@
 // main.cpp - Raylib Icon Maker by Demi 💖 PRO MAX (with GUI Text Input + Color Wheel + Palette)
 // Saves/loads by user-typed path (SAVE_MODE/LOAD_MODE) for iOS/MacOS/Codemagic compatibility.
-
+//
 #include "raylib.h"
 #include <vector>
 #include <stack>
